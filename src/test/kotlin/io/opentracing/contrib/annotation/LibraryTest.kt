@@ -4,11 +4,14 @@
 package io.opentracing.contrib.annotation
 
 import kotlin.test.Test
-import kotlin.test.assertTrue
+
 
 class LibraryTest {
-    @Test fun testSomeLibraryMethod() {
-        val classUnderTest = Library()
-        assertTrue(classUnderTest.someLibraryMethod(), "someLibraryMethod should return 'true'")
+
+    @Test
+    fun sometest() {
+        val testClass = ClassWithNewSpanAnnotation()
+        testClass.performSomeLogic()
     }
+
 }
