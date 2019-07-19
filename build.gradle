@@ -1,0 +1,30 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+//    id("io.freefair.aspectj.post-compile-weaving").version("3.8.0")
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://artifactory.global.standardchartered.com/artifactory/maven-release" }
+}
+
+dependencies {
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+    api 'org.apache.commons:commons-math3:3.6.1'
+
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'com.google.guava:guava:27.0.1-jre'
+    compile("org.aspectj:aspectjrt:1.9.4")
+    compile("org.aspectj:aspectjweaver:1.9.4")
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+}
+
+test {
+    doFirst {
+        def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
+        jvmArgs = jvmArgs << "-javaagent:$weaver"
+    }
+}
