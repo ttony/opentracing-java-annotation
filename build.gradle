@@ -6,7 +6,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url "https://artifactory.global.standardchartered.com/artifactory/maven-release" }
 }
 
 dependencies {
