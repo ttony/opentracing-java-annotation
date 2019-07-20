@@ -25,3 +25,14 @@ public void calculateTax(Span span, TaxModel model) {
     ...
 }
 ```
+
+### Override Default Span's OperationName
+
+
+```java
+@NewSpan(operationName="calculateGST")
+public void calculateTax(Span span, TaxModel model) {
+    span.log("event logging");
+    ...
+}
+```
