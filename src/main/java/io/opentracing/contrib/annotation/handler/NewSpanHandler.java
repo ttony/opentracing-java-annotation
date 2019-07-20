@@ -22,13 +22,14 @@ public class NewSpanHandler {
     public Object newSpanAround(ProceedingJoinPoint joinPoint) throws Throwable {
         System.out.println("start here");
         Tracer tracer = GlobalTracer.get();
-        String operationName = joinPoint.getSignature().getName();
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+
+        String operationName = signature.getName();
         Object[] args = joinPoint.getArgs();
 
         Span span = tracer.buildSpan(operationName).start();
 
-        MethodSignature sig = (MethodSignature) joinPoint.getSignature();
-        Parameter[] parameters = sig.getMethod().getParameters();
+        Parameter[] parameters = signature.getMethod().getParameters();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i].getType().isAssignableFrom(Span.class)) {
                 args[i] = span;

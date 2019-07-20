@@ -3,21 +3,71 @@
  */
 package io.opentracing.contrib;
 
-import io.opentracing.Span;
-import io.opentracing.Tracer;
+import io.opentracing.mock.MockSpan;
+import io.opentracing.mock.MockTracer;
 import io.opentracing.util.GlobalTracer;
+import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.List;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 public class LibraryTest {
-    @Test
-    public void testAnnote() {
-        Span span = null;
 
-        ClassWithNewSpanAnnotation classWithNewSpanAnnotation = new ClassWithNewSpanAnnotation();
-        classWithNewSpanAnnotation.performSomeLogic(span);
+    private static MockTracer tracer;
 
-        System.out.println("span :: " + span);
-//        Tracer tracer = GlobalTracer.get();
-//        tracer.scopeManager().
+    @BeforeClass
+    public static void init() {
+        tracer = new MockTracer();
+        GlobalTracer.registerIfAbsent(tracer);
     }
+
+    @After
+    public void tearDown() {
+        tracer.reset();
+    }
+
+    @Test
+    public void testWithNoArgs() {
+        new ClassWithNewSpanAnnotation().withEmptyArgs();
+    }
+
+    @Test
+    public void testWithSpanArgs() {
+        new ClassWithNewSpanAnnotation().withSpanArgs(null);
+    }
+
+
+    @Test
+    public void testWithSpanArgsOnExtraLogic() {
+
+        // When
+        new ClassWithNewSpanAnnotation().withExtraLogicOnSpanArgs(null);
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("withExtraLogicOnSpanArgs"));
+        assertThat(mockSpan.logEntries().size(), is(1));
+        assertThat(mockSpan.logEntries().get(0).fields().get("event"), is("this is event log"));
+    }
+
+    @Test
+    public void testNewSpanCreation() {
+
+        // When
+        new ClassWithNewSpanAnnotation().withEmptyArgs();
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("withEmptyArgs"));
+    }
+
 }
