@@ -1,7 +1,5 @@
 plugins {
-    // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-//    id("io.freefair.aspectj.post-compile-weaving").version("3.8.0")
 }
 
 repositories {
@@ -9,13 +7,15 @@ repositories {
 }
 
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:27.0.1-jre'
     compile("org.aspectj:aspectjrt:1.9.4")
     compile("org.aspectj:aspectjweaver:1.9.4")
+
+    compile("io.opentracing:opentracing-api:0.32.0")
+    compile("io.opentracing:opentracing-noop:0.32.0")
+    compile("io.opentracing:opentracing-mock:0.32.0")
+    compile("io.opentracing:opentracing-util:0.32.0")
+
+    compile("com.google.guava:guava:28.0-jre")
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'

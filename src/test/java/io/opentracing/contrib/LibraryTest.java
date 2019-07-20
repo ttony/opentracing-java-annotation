@@ -3,13 +3,21 @@
  */
 package io.opentracing.contrib;
 
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import org.junit.Test;
 
 public class LibraryTest {
     @Test
     public void testAnnote() {
-        ClassWithNewSpanAnnotation classWithNewSpanAnnotation = new ClassWithNewSpanAnnotation();
-        classWithNewSpanAnnotation.performSomeLogic();
+        Span span = null;
 
+        ClassWithNewSpanAnnotation classWithNewSpanAnnotation = new ClassWithNewSpanAnnotation();
+        classWithNewSpanAnnotation.performSomeLogic(span);
+
+        System.out.println("span :: " + span);
+//        Tracer tracer = GlobalTracer.get();
+//        tracer.scopeManager().
     }
 }
