@@ -25,4 +25,7 @@ public class ClassWithNewSpanAnnotation {
         assertThat(span, not(nullValue()));
         span.log("this is event log");
     }
+
+    @NewSpan(operationName="newName")
+    public void withOperationName() {}
 }

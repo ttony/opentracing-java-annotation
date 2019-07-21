@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableMap;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.annotation.NewSpan;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,7 +26,14 @@ public class NewSpanHandler {
         Tracer tracer = GlobalTracer.get();
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 
-        String operationName = signature.getName();
+        String operationName = null;
+        NewSpan newSpanAnnotation = signature.getMethod().getAnnotation(NewSpan.class);
+        if(StringUtils.isBlank(newSpanAnnotation.operationName())) {
+            operationName = signature.getName();
+        } else {
+            operationName = newSpanAnnotation.operationName();
+        }
+
         Object[] args = joinPoint.getArgs();
 
         Span span = tracer.buildSpan(operationName).start();

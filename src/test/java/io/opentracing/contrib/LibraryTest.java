@@ -70,4 +70,17 @@ public class LibraryTest {
         assertThat(mockSpan.operationName(), is("withEmptyArgs"));
     }
 
+    @Test
+    public void testNewSpanCreationWithOverrideOperationName() {
+
+        // When
+        new ClassWithNewSpanAnnotation().withOperationName();
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("newName"));
+    }
 }

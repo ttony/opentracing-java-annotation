@@ -14,6 +14,9 @@ dependencies {
     compile("io.opentracing:opentracing-util:0.32.0")
 
     compile("com.google.guava:guava:28.0-jre")
+    compile("org.apache.commons:commons-lang3:3.9")
+
+
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
