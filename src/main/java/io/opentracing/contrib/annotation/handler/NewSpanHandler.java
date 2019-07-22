@@ -22,34 +22,21 @@ public class NewSpanHandler {
 
     @Around("execution(@io.opentracing.contrib.annotation.NewSpan * * (..))")
     public Object newSpanAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("start here");
         Tracer tracer = GlobalTracer.get();
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-
-        String operationName = null;
-        NewSpan newSpanAnnotation = signature.getMethod().getAnnotation(NewSpan.class);
-        if(StringUtils.isBlank(newSpanAnnotation.operationName())) {
-            operationName = signature.getName();
-        } else {
-            operationName = newSpanAnnotation.operationName();
-        }
-
         Object[] args = joinPoint.getArgs();
 
-        Span span = tracer.buildSpan(operationName).start();
+        Span span = tracer.buildSpan(getOperationName(signature)).start();
 
         Parameter[] parameters = signature.getMethod().getParameters();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i].getType().isAssignableFrom(Span.class)) {
                 args[i] = span;
-            } else {
-                System.out.println("not applicable types assignment");
             }
         }
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
             Object result = joinPoint.proceed(args);
-            System.out.println("done here");
             return result;
         } catch (Throwable ex) {
             Tags.ERROR.set(span, true);
@@ -58,5 +45,16 @@ public class NewSpanHandler {
         } finally {
             span.finish();
         }
+    }
+
+    private String getOperationName(MethodSignature signature) {
+        String operationName;
+        NewSpan newSpanAnnotation = signature.getMethod().getAnnotation(NewSpan.class);
+        if(StringUtils.isBlank(newSpanAnnotation.operationName())) {
+            operationName = signature.getName();
+        } else {
+            operationName = newSpanAnnotation.operationName();
+        }
+        return operationName;
     }
 }
