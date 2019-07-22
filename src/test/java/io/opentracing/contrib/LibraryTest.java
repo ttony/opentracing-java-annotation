@@ -55,6 +55,8 @@ public class LibraryTest {
         assertThat(mockSpan.operationName(), is("withExtraLogicOnSpanArgs"));
         assertThat(mockSpan.logEntries().size(), is(1));
         assertThat(mockSpan.logEntries().get(0).fields().get("event"), is("this is event log"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(true));
     }
 
     @Test
@@ -69,6 +71,8 @@ public class LibraryTest {
 
         MockSpan mockSpan = mockSpans.get(0);
         assertThat(mockSpan.operationName(), is("withEmptyArgs"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(true));
     }
 
     @Test
@@ -83,5 +87,24 @@ public class LibraryTest {
 
         MockSpan mockSpan = mockSpans.get(0);
         assertThat(mockSpan.operationName(), is("newName"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(true));
+    }
+
+    @Test
+    public void testNewSpanCreationWithTag() {
+
+        // When
+        new ClassWithNewSpanAnnotation().withTag("tag-value");
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("withTag"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(false));
+        assertThat(mockSpan.tags().get("tag-name"), is("tag-value"));
     }
 }

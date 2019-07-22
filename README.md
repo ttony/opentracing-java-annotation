@@ -15,6 +15,14 @@ public void calculateTax(TaxModel model) {
 }
 ```
 
+### Tag A New Span
+```java
+@NewSpan
+public void calculateTax(TaxModel model, @SpanTag("tag-name") String tagValue) {
+    ...
+}
+```
+
 ### Injecting A Span
 
 

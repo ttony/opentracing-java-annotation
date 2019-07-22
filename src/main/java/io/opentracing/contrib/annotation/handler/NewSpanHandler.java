@@ -5,10 +5,12 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.annotation.NewSpan;
+import io.opentracing.contrib.annotation.SpanTag;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,6 +39,10 @@ public class NewSpanHandler {
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i].getType().isAssignableFrom(Span.class)) {
                 args[i] = span;
+            } else if (parameters[i].getAnnotation(SpanTag.class) != null) {
+                SpanTag annotation = parameters[i].getAnnotation(SpanTag.class);
+                String tagKey = annotation.value();
+                MethodUtils.invokeExactMethod(span, "setTag", tagKey, args[i]);
             }
         }
 

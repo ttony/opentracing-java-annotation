@@ -2,6 +2,7 @@ package io.opentracing.contrib;
 
 import io.opentracing.Span;
 import io.opentracing.contrib.annotation.NewSpan;
+import io.opentracing.contrib.annotation.SpanTag;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -28,4 +29,10 @@ public class ClassWithNewSpanAnnotation {
 
     @NewSpan(operationName="newName")
     public void withOperationName() {}
+
+    @NewSpan
+    public void withTag(@SpanTag("tag-name") String tagValue) {
+        assertTrue(true);
+    }
+
 }
