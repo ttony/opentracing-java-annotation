@@ -4,6 +4,8 @@
 
 This library is a java annotation driven for OpenTracing.
 
+> Note: The annotation concept is purely comes from Spring Sleuth project.
+
 ## Usage
 
 ### Creating A New Span
