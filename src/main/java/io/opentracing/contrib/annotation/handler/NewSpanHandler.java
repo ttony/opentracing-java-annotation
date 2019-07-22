@@ -26,7 +26,12 @@ public class NewSpanHandler {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Object[] args = joinPoint.getArgs();
 
-        Span span = tracer.buildSpan(getOperationName(signature)).start();
+        Span parentSpan = tracer.scopeManager().activeSpan();
+        String operationName = getOperationName(signature);
+
+        Span span = tracer.buildSpan(operationName)
+                        .asChildOf(parentSpan)
+                        .start();
 
         Parameter[] parameters = signature.getMethod().getParameters();
         for (int i = 0; i < parameters.length; i++) {
