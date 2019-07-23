@@ -1,8 +1,6 @@
-package io.opentracing.contrib;
+package com.mjsoft.opentracing.contrib.annotation;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.annotation.NewSpan;
-import io.opentracing.contrib.annotation.SpanTag;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;

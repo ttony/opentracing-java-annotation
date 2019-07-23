@@ -1,11 +1,11 @@
-package io.opentracing.contrib.annotation.handler;
+package com.mjsoft.opentracing.contrib.annotation.handler;
 
 import com.google.common.collect.ImmutableMap;
+import com.mjsoft.opentracing.contrib.annotation.NewSpan;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
-import io.opentracing.contrib.annotation.NewSpan;
-import io.opentracing.contrib.annotation.SpanTag;
+import com.mjsoft.opentracing.contrib.annotation.SpanTag;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
@@ -22,7 +22,7 @@ import java.lang.reflect.Parameter;
 @SuppressWarnings("unused")
 public class NewSpanHandler {
 
-    @Around("execution(@io.opentracing.contrib.annotation.NewSpan * * (..))")
+    @Around("execution(@com.mjsoft.opentracing.contrib.annotation.NewSpan * * (..))")
     public Object newSpanAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Tracer tracer = GlobalTracer.get();
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
