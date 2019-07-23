@@ -35,4 +35,13 @@ public class ClassWithNewSpanAnnotation {
         assertTrue(true);
     }
 
+
+    public void internalMethodCallwithTag() {
+        internalWithTag("another-tag-value");
+    }
+
+    @NewSpan
+    private void internalWithTag(@SpanTag("tag-name") String tagValue) {
+        assertTrue(true);
+    }
 }
