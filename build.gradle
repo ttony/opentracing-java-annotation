@@ -1,10 +1,14 @@
 plugins {
     id 'java-library'
+    id "io.codearte.nexus-staging" version "0.21.0"
 }
 
 repositories {
     mavenCentral()
 }
+
+group = 'io.github.ttony'
+version = '1.0'
 
 dependencies {
     compile("org.aspectj:aspectjrt:1.9.4")
@@ -26,9 +30,80 @@ dependencies {
 
 }
 
+// Signing
+apply plugin: 'signing'
+signing {
+    sign configurations.archives
+}
+
+// Deployment
+apply plugin: 'maven'
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
 test {
     doFirst {
         def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
         jvmArgs = jvmArgs << "-javaagent:$weaver"
     }
+}
+
+if (project.hasProperty('release')) {
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                // POM signature
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                // Target repository
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUser, password: ossrhPassword)
+                }
+                pom.project {
+                    name project.name
+                    description project.description
+                    packaging 'jar'
+                    url 'https://github.com/ttony/opentracing-java-annotation'
+
+                    scm {
+                        connection 'scm:git:https://github.com/ttony/opentracing-java-annotation.git'
+                        developerConnection 'scm:git:tonytony1@gmail.com:ttony/opentracing-java-annotation.git'
+                        url 'https://github.com/ttony/opentracing-java-annotation.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The MIT License (MIT)'
+                            url 'http://opensource.org/licenses/MIT'
+                            distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'ttony'
+                            name = 'Tony Tony'
+                            email = 'tonytony1@gmail.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusStaging {
+    username = ossrhUser
+    password = ossrhPassword
 }
