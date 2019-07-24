@@ -30,28 +30,6 @@ dependencies {
 
 }
 
-// Signing
-apply plugin: 'signing'
-signing {
-    sign configurations.archives
-}
-
-// Deployment
-apply plugin: 'maven'
-
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
-}
 
 test {
     doFirst {
@@ -61,6 +39,29 @@ test {
 }
 
 if (project.hasProperty('release')) {
+    // Signing
+    apply plugin: 'signing'
+    signing {
+        sign configurations.archives
+    }
+
+    // Deployment
+    apply plugin: 'maven'
+
+    task javadocJar(type: Jar) {
+        archiveClassifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+    
     uploadArchives {
         repositories {
             mavenDeployer {
@@ -101,9 +102,9 @@ if (project.hasProperty('release')) {
             }
         }
     }
-}
 
-nexusStaging {
-    username = ossrhUser
-    password = ossrhPassword
+    nexusStaging {
+        username = ossrhUser
+        password = ossrhPassword
+    }
 }
