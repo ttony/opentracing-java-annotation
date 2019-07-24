@@ -6,6 +6,14 @@ This library is a java annotation driven for OpenTracing.
 
 > Note: The annotation concept is purely comes from Spring Sleuth project.
 
+## Dependency
+```xml
+<dependency>
+    <groupId>io.github.ttony</groupId>
+    <artifactId>opentracing-java-annotation</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 ## Usage
 
 ### Creating A New Span
