@@ -11,7 +11,7 @@ This library is a java annotation driven for OpenTracing.
 <dependency>
     <groupId>io.github.ttony</groupId>
     <artifactId>opentracing-java-annotation</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 ## Usage
