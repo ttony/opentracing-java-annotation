@@ -8,7 +8,7 @@ repositories {
 }
 
 group = 'io.github.ttony'
-version = '1.0'
+version = '1.0.1'
 
 dependencies {
     compile("org.aspectj:aspectjrt:1.9.4")
