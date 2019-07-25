@@ -6,6 +6,7 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.annotation.SpanTag;
+import io.opentracing.contrib.annotation.utils.ExceptionUtils;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
@@ -16,6 +17,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 
 @Aspect
@@ -28,23 +30,8 @@ public class NewSpanHandler {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Object[] args = joinPoint.getArgs();
 
-        Span parentSpan = tracer.scopeManager().activeSpan();
-        String operationName = getOperationName(signature);
-
-        Span span = tracer.buildSpan(operationName)
-                        .asChildOf(parentSpan)
-                        .start();
-
-        Parameter[] parameters = signature.getMethod().getParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            if (parameters[i].getType().isAssignableFrom(Span.class)) {
-                args[i] = span;
-            } else if (parameters[i].getAnnotation(SpanTag.class) != null) {
-                SpanTag annotation = parameters[i].getAnnotation(SpanTag.class);
-                String tagKey = annotation.value();
-                MethodUtils.invokeExactMethod(span, "setTag", tagKey, args[i]);
-            }
-        }
+        Span span = startSpan(signature);
+        resolveParameter(signature, args, span);
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
             Object result = joinPoint.proceed(args);
@@ -58,6 +45,33 @@ public class NewSpanHandler {
         }
     }
 
+    private void resolveParameter(MethodSignature signature, Object[] args, Span span) throws Exception {
+        Parameter[] parameters = signature.getMethod().getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            if (parameters[i].getType().isAssignableFrom(Span.class)) {
+                args[i] = span;
+            } else if (parameters[i].getAnnotation(SpanTag.class) != null) {
+                setupTag(parameters[i], args[i], span);
+            }
+        }
+    }
+
+    private void setupTag(Parameter parameter, Object arg, Span span) throws Exception {
+        SpanTag annotation = parameter.getAnnotation(SpanTag.class);
+        String tagKey = annotation.value();
+        ExceptionUtils.safeCheckEx( () -> MethodUtils.invokeExactMethod(span, "setTag", tagKey, arg));
+    }
+
+    private Span startSpan(MethodSignature signature) {
+        Tracer tracer = GlobalTracer.get();
+        Span parentSpan = tracer.scopeManager().activeSpan();
+        String operationName = getOperationName(signature);
+
+        return tracer.buildSpan(operationName)
+                        .asChildOf(parentSpan)
+                        .start();
+    }
+
     private String getOperationName(MethodSignature signature) {
         String operationName;
         NewSpan newSpanAnnotation = signature.getMethod().getAnnotation(NewSpan.class);
@@ -66,6 +80,7 @@ public class NewSpanHandler {
         } else {
             operationName = newSpanAnnotation.operationName();
         }
+
         return operationName;
     }
 }

@@ -33,6 +33,8 @@ public class ClassWithNewSpanAnnotation {
         assertTrue(true);
     }
 
+    @NewSpan
+    public void withUnsupportedValueTag(@SpanTag("tag-name") byte[] tagValue) {}
 
     public void internalMethodCallwithTag() {
         internalWithTag("another-tag-value");

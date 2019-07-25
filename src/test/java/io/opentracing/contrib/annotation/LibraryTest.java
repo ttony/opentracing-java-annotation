@@ -124,4 +124,20 @@ public class LibraryTest {
         assertThat(mockSpan.tags().isEmpty(), is(false));
         assertThat(mockSpan.tags().get("tag-name"), is("another-tag-value"));
     }
+
+    @Test
+    public void testNewSpanCreationWithUnsupportedValueTag() {
+
+        // When
+        new ClassWithNewSpanAnnotation().withUnsupportedValueTag("tony".getBytes());
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("withUnsupportedValueTag"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(true));
+    }
 }
