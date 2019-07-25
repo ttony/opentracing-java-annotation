@@ -1,5 +1,5 @@
 <aspectj>
     <aspects>
-        <aspect name="com.mjsoft.opentracing.contrib.annotation.handler.NewSpanHandler"/>
+        <aspect name="io.opentracing.contrib.annotation.handler.NewSpanHandler"/>
     </aspects>
 </aspectj>

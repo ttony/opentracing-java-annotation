@@ -67,7 +67,7 @@ Register the Aspect class as spring bean:
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean class="com.mjsoft.opentracing.contrib.annotation.handler.NewSpanHandler" />
+    <bean class="io.opentracing.contrib.annotation.handler.NewSpanHandler" />
 </beans>
 ```
 

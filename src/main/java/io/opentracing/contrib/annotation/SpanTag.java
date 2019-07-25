@@ -1,4 +1,4 @@
-package com.mjsoft.opentracing.contrib.annotation;
+package io.opentracing.contrib.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
