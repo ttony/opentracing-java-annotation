@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ttony/opentracing-java-annotation.svg?branch=master)](https://travis-ci.com/ttony/opentracing-java-annotation)
+[![Build Status](https://travis-ci.com/ttony/opentracing-java-annotation.svg?branch=master)](https://travis-ci.com/ttony/opentracing-java-annotation) [![Maven Central](https://img.shields.io/maven-central/v/io.github.ttony/opentracing-java-annotation.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.github.ttony%22%20AND%20a:%22opentracing-java-annotation%22) 
 
 # OpenTracing Java Annotation
 
