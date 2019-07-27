@@ -32,6 +32,11 @@ dependencies {
 }
 
 jacocoTestReport {
+    doFirst {
+        def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
+        jvmArgs = jvmArgs << "-javaagent:$weaver"
+    }
+
     reports {
         xml.enabled true
         html.enabled false
