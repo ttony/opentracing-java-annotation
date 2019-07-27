@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'jacoco'
     id "io.codearte.nexus-staging" version "0.21.0"
 }
 
@@ -30,6 +31,12 @@ dependencies {
 
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
 
 test {
     doFirst {
@@ -37,6 +44,8 @@ test {
         jvmArgs = jvmArgs << "-javaagent:$weaver"
     }
 }
+
+check.dependsOn jacocoTestReport
 
 if (project.hasProperty('release')) {
     // Signing
