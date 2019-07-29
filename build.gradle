@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'jacoco'
     id "io.codearte.nexus-staging" version "0.21.0"
+//    id "io.freefair.aspectj.post-compile-weaving" version "3.8.1"
 }
 
 repositories {
@@ -11,9 +12,16 @@ repositories {
 group = 'io.github.ttony'
 version = '1.0.1'
 
+//aspectj {
+//    version = "1.9.4"
+//}
+
+
 dependencies {
     compile("org.aspectj:aspectjrt:1.9.4")
     compile("org.aspectj:aspectjweaver:1.9.4")
+
+    compile "org.aspectj:aspectjrt:1.9.4"
 
     compile("io.opentracing:opentracing-api:0.32.0")
     compile("io.opentracing:opentracing-util:0.32.0")
@@ -32,14 +40,9 @@ dependencies {
 }
 
 jacocoTestReport {
-    doFirst {
-        def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
-        jvmArgs = jvmArgs << "-javaagent:$weaver"
-    }
-
     reports {
         xml.enabled true
-        html.enabled false
+        html.enabled true
     }
 }
 
