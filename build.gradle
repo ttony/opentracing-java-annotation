@@ -18,23 +18,20 @@ version = '1.0.1'
 
 
 dependencies {
-    compile("org.aspectj:aspectjrt:1.9.4")
-    compile("org.aspectj:aspectjweaver:1.9.4")
-
+    compile "org.aspectj:aspectjrt:1.9.4"
+    compile "org.aspectj:aspectjweaver:1.9.4"
     compile "org.aspectj:aspectjrt:1.9.4"
 
-    compile("io.opentracing:opentracing-api:0.32.0")
-    compile("io.opentracing:opentracing-util:0.32.0")
+    compile "io.opentracing:opentracing-api:0.33.0"
+    compile "io.opentracing:opentracing-util:0.33.0"
 
-    compile("com.google.guava:guava:28.0-jre")
-    compile("org.apache.commons:commons-lang3:3.9")
-
-
+    compile "com.google.guava:guava:28.0-jre"
+    compile "org.apache.commons:commons-lang3:3.9"
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
-    testCompile("io.opentracing:opentracing-noop:0.32.0")
-    testCompile("io.opentracing:opentracing-mock:0.32.0")
+    testCompile "io.opentracing:opentracing-noop:0.33.0"
+    testCompile "io.opentracing:opentracing-mock:0.33.0"
 
 
 }
