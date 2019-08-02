@@ -44,4 +44,9 @@ public class ClassWithNewSpanAnnotation {
     private void internalWithTag(@SpanTag("tag-name") String tagValue) {
         assertTrue(true);
     }
+
+    @NewSpan(tagMapper = @SpanTagMapper(resolver = JmsHeaderTagMapper.class))
+    private void withAdvanceTag() {
+        assertTrue(true);
+    }
 }
