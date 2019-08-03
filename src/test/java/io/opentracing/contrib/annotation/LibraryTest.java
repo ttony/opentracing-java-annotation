@@ -9,13 +9,23 @@ import io.opentracing.util.GlobalTracer;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LibraryTest {
+
+    @Mock private Message message;
 
     private static MockTracer tracer;
 
@@ -106,6 +116,43 @@ public class LibraryTest {
 
         assertThat(mockSpan.tags().isEmpty(), is(false));
         assertThat(mockSpan.tags().get("tag-name"), is("tag-value"));
+    }
+
+    @Test
+    public void testNewSpanCreationWithAdvanceTag() throws Exception {
+        // Given
+        when(message.getJMSMessageID()).thenReturn("msg-id-sample");
+
+        // When
+        new ClassWithNewSpanAnnotation().withAdvanceTag(message);
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("withAdvanceTag"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(false));
+        assertThat(mockSpan.tags().get("msg-id"), is("msg-id-sample"));
+    }
+
+    @Test
+    public void testNewSpanCreationWithAdvanceTagArgumentNotMatch() throws Exception {
+        // Given
+        when(message.getJMSMessageID()).thenReturn("msg-id-sample");
+
+        // When
+        new ClassWithNewSpanAnnotation().withAdvanceTagNotMatchedArgument("tony");
+
+        // Then
+        List<MockSpan> mockSpans = tracer.finishedSpans();
+        assertThat(mockSpans.size(), is(1));
+
+        MockSpan mockSpan = mockSpans.get(0);
+        assertThat(mockSpan.operationName(), is("withAdvanceTagNotMatchedArgument"));
+
+        assertThat(mockSpan.tags().isEmpty(), is(true));
     }
 
     @Test
