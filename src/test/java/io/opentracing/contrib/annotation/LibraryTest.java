@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.jms.Message;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
