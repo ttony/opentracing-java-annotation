@@ -1,15 +1,16 @@
 package io.opentracing.contrib.annotation.handler;
 
 import com.google.common.collect.ImmutableMap;
-import io.opentracing.contrib.annotation.NewSpan;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.annotation.NewSpan;
 import io.opentracing.contrib.annotation.SpanTag;
 import io.opentracing.contrib.annotation.utils.ExceptionUtils;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,12 +18,15 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
+import java.util.Map;
 
 @Aspect
+@Slf4j
 @SuppressWarnings("unused")
 public class NewSpanHandler {
+
+    private TagMapperHandler tagMapperHandler = new TagMapperHandler();
 
     @Around("execution(@io.opentracing.contrib.annotation.NewSpan * * (..))")
     public Object newSpanAround(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -31,6 +35,9 @@ public class NewSpanHandler {
         Object[] args = joinPoint.getArgs();
 
         Span span = startSpan(signature);
+        Map<String, Object> tags = tagMapperHandler.invokeTagMapper(signature, args);
+
+        setupTag(tags, span);
         resolveParameter(signature, args, span);
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
@@ -60,6 +67,11 @@ public class NewSpanHandler {
         SpanTag annotation = parameter.getAnnotation(SpanTag.class);
         String tagKey = annotation.value();
         ExceptionUtils.safeCheckEx( () -> MethodUtils.invokeExactMethod(span, "setTag", tagKey, arg));
+    }
+
+    private void setupTag(Map<String, Object> tags, Span span) {
+        tags.entrySet().stream()
+            .forEach( e -> ExceptionUtils.safeCheckEx( () -> MethodUtils.invokeExactMethod(span, "setTag", e.getKey(), e.getValue())));
     }
 
     private Span startSpan(MethodSignature signature) {

@@ -2,6 +2,8 @@ package io.opentracing.contrib.annotation;
 
 import io.opentracing.Span;
 
+import javax.jms.Message;
+
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -46,7 +48,12 @@ public class ClassWithNewSpanAnnotation {
     }
 
     @NewSpan(tagMapper = @SpanTagMapper(resolver = JmsHeaderTagMapper.class))
-    private void withAdvanceTag() {
+    public void withAdvanceTag(Message message) {
+        assertTrue(true);
+    }
+
+    @NewSpan(tagMapper = @SpanTagMapper(resolver = JmsHeaderTagMapper.class))
+    public void withAdvanceTagNotMatchedArgument(String message) {
         assertTrue(true);
     }
 }
