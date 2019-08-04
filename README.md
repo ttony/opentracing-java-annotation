@@ -26,12 +26,28 @@ public void calculateTax(TaxModel model) {
 ```
 
 ### Tag A New Span
-```java
-@NewSpan
-public void calculateTax(TaxModel model, @SpanTag("tag-name") String tagValue) {
+- Simple
+    ````java
+    @NewSpan
+    public void calculateTax(TaxModel model, @SpanTag("tag-name") String tagValue) { 
+      ...
+    }
+    ````
+- Advance
+  ````java
+  @NewSpan(tagMapper = @SpanTagMapper(resolver = TaxModelTagMapper.class))
+  public void calculateTax(TaxModel model) {
     ...
-}
-```
+  }
+  ````
+  ````java
+  public class TaxModelTagMapper implements TagMapper<TaxModel> {
+  
+      public Map<String, Object> tag(TaxModel model) throws Exception {
+          ...
+      }
+  }
+  ````
 
 ### Injecting A Span
 
