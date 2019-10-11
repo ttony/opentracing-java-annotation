@@ -14,6 +14,13 @@ This library is a java annotation driven for OpenTracing.
     <version>1.1.0</version>
 </dependency>
 ```
+
+## Run
+Please include VM Options as
+```java
+-javaagent:<PATH_TO_ASPECTJ>/aspectjweaver-1.9.4.jar
+```
+
 ## Usage
 
 ### Creating A New Span
