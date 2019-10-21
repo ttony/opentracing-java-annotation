@@ -11,6 +11,7 @@ import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,6 +19,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
@@ -41,8 +43,7 @@ public class NewSpanHandler {
         resolveParameter(signature, args, span);
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
-            Object result = joinPoint.proceed(args);
-            return result;
+            return joinPoint.proceed(args);
         } catch (Throwable ex) {
             Tags.ERROR.set(span, true);
             span.log(ImmutableMap.of(Fields.EVENT, "error", Fields.ERROR_OBJECT, ex, Fields.MESSAGE, ex.getMessage()));
@@ -52,7 +53,7 @@ public class NewSpanHandler {
         }
     }
 
-    private void resolveParameter(MethodSignature signature, Object[] args, Span span) throws Exception {
+    private void resolveParameter(MethodSignature signature, Object[] args, Span span) {
         Parameter[] parameters = signature.getMethod().getParameters();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i].getType().isAssignableFrom(Span.class)) {
@@ -63,7 +64,7 @@ public class NewSpanHandler {
         }
     }
 
-    private void setupTag(Parameter parameter, Object arg, Span span) throws Exception {
+    private void setupTag(Parameter parameter, Object arg, Span span) {
         SpanTag annotation = parameter.getAnnotation(SpanTag.class);
         String tagKey = annotation.value();
         ExceptionUtils.safeCheckEx( () -> MethodUtils.invokeExactMethod(span, "setTag", tagKey, arg));
@@ -86,9 +87,10 @@ public class NewSpanHandler {
 
     private String getOperationName(MethodSignature signature) {
         String operationName;
-        NewSpan newSpanAnnotation = signature.getMethod().getAnnotation(NewSpan.class);
+        Method method = signature.getMethod();
+        NewSpan newSpanAnnotation = method.getAnnotation(NewSpan.class);
         if(StringUtils.isBlank(newSpanAnnotation.operationName())) {
-            operationName = signature.getName();
+            operationName = ClassUtils.getSimpleName(method.getDeclaringClass()) + "." + signature.getName();
         } else {
             operationName = newSpanAnnotation.operationName();
         }

@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.jms.Message;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -61,7 +60,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("withExtraLogicOnSpanArgs"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.withExtraLogicOnSpanArgs"));
         assertThat(mockSpan.logEntries().size(), is(1));
         assertThat(mockSpan.logEntries().get(0).fields().get("event"), is("this is event log"));
 
@@ -79,7 +78,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("withEmptyArgs"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.withEmptyArgs"));
 
         assertThat(mockSpan.tags().isEmpty(), is(true));
     }
@@ -111,7 +110,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("withTag"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.withTag"));
 
         assertThat(mockSpan.tags().isEmpty(), is(false));
         assertThat(mockSpan.tags().get("tag-name"), is("tag-value"));
@@ -130,7 +129,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("withAdvanceTag"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.withAdvanceTag"));
 
         assertThat(mockSpan.tags().isEmpty(), is(false));
         assertThat(mockSpan.tags().get("msg-id"), is("msg-id-sample"));
@@ -149,7 +148,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("withAdvanceTagNotMatchedArgument"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.withAdvanceTagNotMatchedArgument"));
 
         assertThat(mockSpan.tags().isEmpty(), is(true));
     }
@@ -165,7 +164,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("internalWithTag"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.internalWithTag"));
 
         assertThat(mockSpan.tags().isEmpty(), is(false));
         assertThat(mockSpan.tags().get("tag-name"), is("another-tag-value"));
@@ -182,7 +181,7 @@ public class LibraryTest {
         assertThat(mockSpans.size(), is(1));
 
         MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("withUnsupportedValueTag"));
+        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.withUnsupportedValueTag"));
 
         assertThat(mockSpan.tags().isEmpty(), is(true));
     }
