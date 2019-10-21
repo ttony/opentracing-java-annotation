@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'jacoco'
     id "io.codearte.nexus-staging" version "0.21.0"
-//    id "io.freefair.aspectj.post-compile-weaving" version "3.8.1"
 }
 
 repositories {
@@ -11,11 +10,6 @@ repositories {
 
 group = 'io.github.ttony'
 version = '1.1.0'
-
-//aspectj {
-//    version = "1.9.4"
-//}
-
 
 dependencies {
     compile "org.aspectj:aspectjrt:1.9.4"
