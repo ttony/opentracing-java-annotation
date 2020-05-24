@@ -46,7 +46,7 @@ public class NewSpanHandler {
             return joinPoint.proceed(args);
         } catch (Throwable ex) {
             Tags.ERROR.set(span, true);
-            span.log(ImmutableMap.of(Fields.EVENT, "error", Fields.ERROR_OBJECT, ex, Fields.MESSAGE, ex.getMessage()));
+            span.log(ImmutableMap.of(Fields.EVENT, "error", Fields.ERROR_OBJECT, ex, Fields.MESSAGE, "" + ex.getMessage()));
             throw ex;
         } finally {
             span.finish();
