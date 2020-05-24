@@ -22,13 +22,19 @@ public class ClassWithNewSpanAnnotation {
     }
 
     @NewSpan
+    public void withNPEThrown() {
+        throw new NullPointerException();
+    }
+
+    @NewSpan
     public void withExtraLogicOnSpanArgs(Span span) {
         assertThat(span, not(nullValue()));
         span.log("this is event log");
     }
 
-    @NewSpan(operationName="newName")
-    public void withOperationName() {}
+    @NewSpan(operationName = "newName")
+    public void withOperationName() {
+    }
 
     @NewSpan
     public void withTag(@SpanTag("tag-name") String tagValue) {
