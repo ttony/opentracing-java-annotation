@@ -47,9 +47,12 @@ test {
         def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
         jvmArgs = jvmArgs << "-javaagent:$weaver"
     }
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
-check.dependsOn jacocoTestReport
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
 
 if (project.hasProperty('release')) {
     // Signing
