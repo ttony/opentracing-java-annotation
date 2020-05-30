@@ -46,7 +46,9 @@ public class NewSpanHandler {
             return joinPoint.proceed(args);
         } catch (Throwable ex) {
             Tags.ERROR.set(span, true);
-            span.log(ImmutableMap.of(Fields.EVENT, "error", Fields.ERROR_OBJECT, ex, Fields.MESSAGE, "" + ex.getMessage()));
+            span.log(ImmutableMap.of(
+                    Fields.ERROR_KIND, "Exception",
+                    Fields.ERROR_OBJECT, ex));
             throw ex;
         } finally {
             span.finish();
@@ -71,8 +73,7 @@ public class NewSpanHandler {
     }
 
     private void setupTag(Map<String, Object> tags, Span span) {
-        tags.entrySet().stream()
-            .forEach( e -> ExceptionUtils.safeCheckEx( () -> MethodUtils.invokeExactMethod(span, "setTag", e.getKey(), e.getValue())));
+        tags.forEach((k, v) -> ExceptionUtils.safeCheckEx(() -> MethodUtils.invokeExactMethod(span, "setTag", k, v)));
     }
 
     private Span startSpan(MethodSignature signature) {
