@@ -11,7 +11,7 @@ This library is a java annotation driven for OpenTracing.
 <dependency>
     <groupId>io.github.ttony</groupId>
     <artifactId>opentracing-java-annotation</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -23,6 +23,15 @@ Please include VM Options as
 
 ## Usage
 
+### Existing Span
+
+```java
+@CurrentSpan
+public void calculateTax(TaxModel model) {
+    ...
+}
+```
+
 ### Creating A New Span
 
 ```java
@@ -32,17 +41,28 @@ public void calculateTax(TaxModel model) {
 }
 ```
 
-### Tag A New Span
+### Tag A New Span or Existing Span
 - Simple
     ````java
     @NewSpan
     public void calculateTax(TaxModel model, @SpanTag("tag-name") String tagValue) { 
       ...
     }
+  
+    @CurrentSpan
+    public void calculateTax(TaxModel model, @SpanTag("tag-name") String tagValue) { 
+       ...
+    }
     ````
+  
 - Advance
   ````java
   @NewSpan(tagMapper = @SpanTagMapper(resolver = TaxModelTagMapper.class))
+  public void calculateTax(TaxModel model) {
+    ...
+  }
+  
+  @CurrentSpan(tagMapper = @SpanTagMapper(resolver = TaxModelTagMapper.class))
   public void calculateTax(TaxModel model) {
     ...
   }
@@ -61,6 +81,12 @@ public void calculateTax(TaxModel model) {
 
 ```java
 @NewSpan
+public void calculateTax(Span span, TaxModel model) {
+    span.log("event logging");
+    ...
+}
+
+@CurrentSpan
 public void calculateTax(Span span, TaxModel model) {
     span.log("event logging");
     ...
