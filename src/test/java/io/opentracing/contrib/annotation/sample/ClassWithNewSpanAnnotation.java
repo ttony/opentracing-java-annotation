@@ -47,7 +47,8 @@ public class ClassWithNewSpanAnnotation {
     }
 
     @NewSpan
-    public void withUnsupportedValueTag(@SpanTag("tag-name") byte[] tagValue) {}
+    public void withUnsupportedValueTag(@SpanTag("tag-name") byte[] tagValue) {
+    }
 
     @NewSpan(tagMapper = @SpanTagMapper(resolver = JmsHeaderTagMapper.class))
     public void withAdvanceTag(Message message) {
