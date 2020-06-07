@@ -1,5 +1,6 @@
 package io.opentracing.contrib.annotation;
 
+import io.opentracing.contrib.annotation.sample.ClassWithNewSpanAnnotation;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.util.GlobalTracer;
@@ -8,21 +9,30 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.jms.Message;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class LibraryTest {
+@RunWith(SpringRunner.class)
+@ContextConfiguration(
+        classes = {TestConfig.class, ClassWithNewSpanAnnotation.class}
+)
+public class NewSpanLibraryTest {
 
-    @Mock private Message message;
+    @Mock
+    private Message message;
 
     private static MockTracer tracer;
+
+    @Autowired
+    private ClassWithNewSpanAnnotation classWithNewSpanAnnotation;
 
     @BeforeClass
     public static void init() {
@@ -37,19 +47,19 @@ public class LibraryTest {
 
     @Test
     public void testWithNoArgs() {
-        new ClassWithNewSpanAnnotation().withEmptyArgs();
+        classWithNewSpanAnnotation.withEmptyArgs();
     }
 
     @Test
     public void testWithSpanArgs() {
-        new ClassWithNewSpanAnnotation().withSpanArgs(null);
+        classWithNewSpanAnnotation.withSpanArgs(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testWithNPE() {
 
         // When
-        new ClassWithNewSpanAnnotation().withNPEThrown();
+        classWithNewSpanAnnotation.withNPEThrown();
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -67,7 +77,7 @@ public class LibraryTest {
     public void testWithSpanArgsOnExtraLogic() {
 
         // When
-        new ClassWithNewSpanAnnotation().withExtraLogicOnSpanArgs(null);
+        classWithNewSpanAnnotation.withExtraLogicOnSpanArgs(null);
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -85,7 +95,7 @@ public class LibraryTest {
     public void testNewSpanCreation() {
 
         // When
-        new ClassWithNewSpanAnnotation().withEmptyArgs();
+        classWithNewSpanAnnotation.withEmptyArgs();
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -101,7 +111,7 @@ public class LibraryTest {
     public void testNewSpanCreationWithOverrideOperationName() {
 
         // When
-        new ClassWithNewSpanAnnotation().withOperationName();
+        classWithNewSpanAnnotation.withOperationName();
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -117,7 +127,7 @@ public class LibraryTest {
     public void testNewSpanCreationWithTag() {
 
         // When
-        new ClassWithNewSpanAnnotation().withTag("tag-value");
+        classWithNewSpanAnnotation.withTag("tag-value");
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -136,7 +146,7 @@ public class LibraryTest {
         when(message.getJMSMessageID()).thenReturn("msg-id-sample");
 
         // When
-        new ClassWithNewSpanAnnotation().withAdvanceTag(message);
+        classWithNewSpanAnnotation.withAdvanceTag(message);
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -155,7 +165,7 @@ public class LibraryTest {
         when(message.getJMSMessageID()).thenReturn("msg-id-sample");
 
         // When
-        new ClassWithNewSpanAnnotation().withAdvanceTagNotMatchedArgument("tony");
+        classWithNewSpanAnnotation.withAdvanceTagNotMatchedArgument("tony");
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();
@@ -168,27 +178,10 @@ public class LibraryTest {
     }
 
     @Test
-    public void testNewSpanCreationWithInternalMethodCalled() {
-
-        // When
-        new ClassWithNewSpanAnnotation().internalMethodCallwithTag();
-
-        // Then
-        List<MockSpan> mockSpans = tracer.finishedSpans();
-        assertThat(mockSpans.size(), is(1));
-
-        MockSpan mockSpan = mockSpans.get(0);
-        assertThat(mockSpan.operationName(), is("ClassWithNewSpanAnnotation.internalWithTag"));
-
-        assertThat(mockSpan.tags().isEmpty(), is(false));
-        assertThat(mockSpan.tags().get("tag-name"), is("another-tag-value"));
-    }
-
-    @Test
     public void testNewSpanCreationWithUnsupportedValueTag() {
 
         // When
-        new ClassWithNewSpanAnnotation().withUnsupportedValueTag("tony".getBytes());
+        classWithNewSpanAnnotation.withUnsupportedValueTag("tony".getBytes());
 
         // Then
         List<MockSpan> mockSpans = tracer.finishedSpans();

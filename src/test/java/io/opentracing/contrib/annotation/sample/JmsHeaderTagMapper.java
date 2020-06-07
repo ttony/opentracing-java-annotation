@@ -1,4 +1,4 @@
-package io.opentracing.contrib.annotation;
+package io.opentracing.contrib.annotation.sample;
 
 import com.google.common.collect.Maps;
 import io.opentracing.contrib.annotation.handler.TagMapper;

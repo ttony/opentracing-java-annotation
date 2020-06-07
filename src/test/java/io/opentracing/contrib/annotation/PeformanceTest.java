@@ -3,36 +3,37 @@
  */
 package io.opentracing.contrib.annotation;
 
-import io.opentracing.mock.MockSpan;
-import io.opentracing.mock.MockTracer;
-import io.opentracing.util.GlobalTracer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import io.opentracing.contrib.annotation.sample.ClassWithNewSpanAnnotation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.jms.Message;
 import java.util.Date;
-import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@ContextConfiguration(
+        classes = {TestConfig.class, ClassWithNewSpanAnnotation.class}
+)
 public class PeformanceTest {
 
-    @Mock private Message message;
+    @Mock
+    private Message message;
+
+    @Autowired
+    private ClassWithNewSpanAnnotation classWithNewSpanAnnotation;
 
     @Test
     public void testWithNoArgs() {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withEmptyArgs();
+            classWithNewSpanAnnotation.withEmptyArgs();
         }
 
         long end = new Date().getTime();
@@ -45,7 +46,7 @@ public class PeformanceTest {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withSpanArgs(null);
+            classWithNewSpanAnnotation.withSpanArgs(null);
         }
 
         long end = new Date().getTime();
@@ -58,7 +59,7 @@ public class PeformanceTest {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withExtraLogicOnSpanArgs(null);
+            classWithNewSpanAnnotation.withExtraLogicOnSpanArgs(null);
         }
 
         long end = new Date().getTime();
@@ -70,7 +71,7 @@ public class PeformanceTest {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withEmptyArgs();
+            classWithNewSpanAnnotation.withEmptyArgs();
         }
 
         long end = new Date().getTime();
@@ -83,7 +84,7 @@ public class PeformanceTest {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withOperationName();
+            classWithNewSpanAnnotation.withOperationName();
         }
 
         long end = new Date().getTime();
@@ -96,7 +97,7 @@ public class PeformanceTest {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withTag("tag-value");
+            classWithNewSpanAnnotation.withTag("tag-value");
         }
 
         long end = new Date().getTime();
@@ -113,7 +114,7 @@ public class PeformanceTest {
         long start = new Date().getTime();
 
         for (int i = 0; i < 1000; i++) {
-            new ClassWithNewSpanAnnotation().withAdvanceTag(message);
+            classWithNewSpanAnnotation.withAdvanceTag(message);
         }
 
         long end = new Date().getTime();
@@ -127,25 +128,11 @@ public class PeformanceTest {
         long start = new Date().getTime();
         for (int i = 0; i < 1000; i++) {
             // When
-            new ClassWithNewSpanAnnotation().withAdvanceTagNotMatchedArgument("tony");
+            classWithNewSpanAnnotation.withAdvanceTagNotMatchedArgument("tony");
         }
 
         long end = new Date().getTime();
         System.out.println("total time taken testNewSpanCreationWithAdvanceTagArgumentNotMatch :: " + ((end - start) / 1000.0) + " ms");
-
-    }
-
-    @Test
-    public void testNewSpanCreationWithInternalMethodCalled() {
-        long start = new Date().getTime();
-
-        for (int i = 0; i < 1000; i++) {
-            // When
-            new ClassWithNewSpanAnnotation().internalMethodCallwithTag();
-        }
-
-        long end = new Date().getTime();
-        System.out.println("total time taken testNewSpanCreationWithInternalMethodCalled :: " + ((end - start) / 1000.0) + " ms");
 
     }
 
@@ -155,7 +142,7 @@ public class PeformanceTest {
 
         for (int i = 0; i < 1000; i++) {
             // When
-            new ClassWithNewSpanAnnotation().withUnsupportedValueTag("tony".getBytes());
+            classWithNewSpanAnnotation.withUnsupportedValueTag("tony".getBytes());
         }
 
         long end = new Date().getTime();
