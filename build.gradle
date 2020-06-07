@@ -26,7 +26,6 @@ dependencies {
 
 
     // Use JUnit test framework
-//    testImplementation 'junit:junit:4.12'
     testCompile "io.opentracing:opentracing-noop:0.33.0"
     testCompile "io.opentracing:opentracing-mock:0.33.0"
     testCompile "javax.jms:javax.jms-api:2.0.1"
@@ -45,10 +44,10 @@ jacocoTestReport {
 }
 
 test {
-    doFirst {
-        def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
-        jvmArgs = jvmArgs << "-javaagent:$weaver"
-    }
+//    doFirst {
+//        def weaver = configurations.compile.find { it.name.contains("aspectjweaver") }
+//        jvmArgs = jvmArgs << "-javaagent:$weaver"
+//    }
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
